@@ -2,6 +2,7 @@ package com.wec.expanding.expandingtoolbar;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,7 +12,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
@@ -27,20 +30,22 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int DATASET_SIZE = 5;
     private static final String[] STRING_ARRAY_LIST = new String[]{
-            "http://s1.picswalls.com/wallpapers/2016/06/10/4k-desktop-background_065226855_309.jpg",
-            "http://s1.picswalls.com/wallpapers/2016/06/10/4k-desktop-wallpaper_065227602_309.jpg",
-            "http://s1.picswalls.com/wallpapers/2016/06/10/free-4k-wallpaper_065238651_309.jpg",
-            "http://s1.picswalls.com/wallpapers/2016/06/10/awesome-4k-wallpaper_065234330_309.jpg",
             "http://people.kzoo.edu/k11kg03/CS107Web/originalLeopard.jpg",
             "http://wfiles.brothersoft.com/e6/android_189017-640x480.jpg",
             "http://www.iceis.pl/640x480/640x480_-_niagarafalls640x480.jpg",
             "http://www.mynetpublish.com/wp-content/uploads/2015/11/green-1397740-640x480.jpg",
-            "http://www.dailymobile.net/wp-content/uploads/2009/03/android-wallpapers-640-480-dailymobile030.jpg"
+            "http://www.dailymobile.net/wp-content/uploads/2009/03/android-wallpapers-640-480-dailymobile030.jpg",
+            "http://www.dailymobile.net/wp-content/uploads/wallpapers/android-640x480-wallpapers/android-640x480-wallpaper-70.jpg",
+            "http://www.dailymobile.net/wp-content/uploads/2012/06/android-640x480-wallpaper-455.jpg",
+            "http://www.dailymobile.net/wp-content/uploads/wallpapers/android-640x480-wallpapers/android-640x480-wallpaper-75.jpg",
+            "https://upload.wikimedia.org/wikipedia/commons/1/1d/160604_kew-gardens-waterlily-house_3-640x480.jpg"
     };
     private RecyclerView recyclerView;
     private MyAdapter adapter;
@@ -81,10 +86,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Glide
+                .with(MainActivity.this)
+                .load("http://www.iceis.pl/640x480/640x480_-_niagarafalls640x480.jpg")
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into((ImageView) findViewById(R.id.header));
+
         recyclerView = (RecyclerView) findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+//        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 //        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(5), true));
 
@@ -99,9 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        return false;
     }
 
     @Override
@@ -211,9 +220,26 @@ public class MainActivity extends AppCompatActivity {
                 Glide
                         .with(MainActivity.this)
                         .load(url)
+                        .asBitmap()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        //.placeholder(R.mipmap.ic_launcher_round)
-                        .into(ivItemImage);
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                ivItemImage.setImageBitmap(resource);
+                                Palette.from(resource).generate(new Palette.PaletteAsyncListener() {
+                                    @Override
+                                    public void onGenerated(Palette palette) {
+                                        final Palette.Swatch swatch = palette.getLightMutedSwatch();
+                                        if (swatch == null) {
+                                            return;
+                                        }
+
+                                        content.setBackgroundColor(swatch.getRgb());
+                                        title.setTextColor(swatch.getTitleTextColor());
+                                    }
+                                });
+                            }
+                        });
             }
         }
     }
