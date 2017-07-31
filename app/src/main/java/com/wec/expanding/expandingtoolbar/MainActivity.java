@@ -12,7 +12,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
@@ -27,19 +26,30 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int DATASET_SIZE = 5;
-    private static final String[] STRING_ARRAY_LIST = new String[DATASET_SIZE];
+    private static final String[] STRING_ARRAY_LIST = new String[]{
+            "http://s1.picswalls.com/wallpapers/2016/06/10/4k-desktop-background_065226855_309.jpg",
+            "http://s1.picswalls.com/wallpapers/2016/06/10/4k-desktop-wallpaper_065227602_309.jpg",
+            "http://s1.picswalls.com/wallpapers/2016/06/10/free-4k-wallpaper_065238651_309.jpg",
+            "http://s1.picswalls.com/wallpapers/2016/06/10/awesome-4k-wallpaper_065234330_309.jpg",
+            "http://people.kzoo.edu/k11kg03/CS107Web/originalLeopard.jpg",
+            "http://wfiles.brothersoft.com/e6/android_189017-640x480.jpg",
+            "http://www.iceis.pl/640x480/640x480_-_niagarafalls640x480.jpg",
+            "http://www.mynetpublish.com/wp-content/uploads/2015/11/green-1397740-640x480.jpg",
+            "http://www.dailymobile.net/wp-content/uploads/2009/03/android-wallpapers-640-480-dailymobile030.jpg"
+    };
     private RecyclerView recyclerView;
     private MyAdapter adapter;
 
-    {
-        for (int i = 0; i < DATASET_SIZE; i++) {
-            STRING_ARRAY_LIST[i] = "Item " + i;
-        }
-    }
+//    {
+//        for (int i = 0; i < DATASET_SIZE; i++) {
+//            STRING_ARRAY_LIST[i] = "Item " + i;
+//        }
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,8 +154,8 @@ public class MainActivity extends AppCompatActivity {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
             final boolean isExpanded = position == mExpandedPosition;
-            holder.title.setText(mDataset[position]);
-
+            holder.title.setText("Item " + position);
+            holder.setImage(mDataset[position]);
 
 //            holder.details.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
 //            holder.itemView.setActivated(isExpanded);
@@ -173,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
             private final ImageView ivItemImage;
             private final View content;
             public TextView title;
+            private String imageUrl;
 
             public ViewHolder(View v) {
                 super(v);
@@ -181,12 +192,6 @@ public class MainActivity extends AppCompatActivity {
                 content = itemView.findViewById(R.id.cv_content);
                 ivItemImage = (ImageView) itemView.findViewById(R.id.iv_item_image);
 
-                Glide
-                        .with(getApplicationContext())
-                        .load("https://vignette2.wikia.nocookie.net/lotr/images/8/8d/Gandalf-2.jpg/revision/latest?cb=20130209172436")
-                        .placeholder(R.mipmap.ic_launcher_round)
-                        .into(ivItemImage);
-
                 content.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -194,11 +199,21 @@ public class MainActivity extends AppCompatActivity {
                                 ActivityOptionsCompat.makeSceneTransitionAnimation(
                                         MainActivity.this, ivItemImage, getString(R.string.transition_cover));
                         final Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
-
+                        intent.putExtra("url", imageUrl);
                         ActivityCompat.startActivity(MainActivity.this, intent, activityOptionsCompat.toBundle());
                     }
                 });
 
+            }
+
+            public void setImage(String url) {
+                this.imageUrl = url;
+                Glide
+                        .with(MainActivity.this)
+                        .load(url)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        //.placeholder(R.mipmap.ic_launcher_round)
+                        .into(ivItemImage);
             }
         }
     }
