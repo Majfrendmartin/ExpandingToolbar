@@ -8,16 +8,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,13 +24,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.transitionseverywhere.ArcMotion;
+import com.transitionseverywhere.ChangeBounds;
+import com.transitionseverywhere.Rotate;
+import com.transitionseverywhere.Slide;
+import com.transitionseverywhere.TransitionManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -77,12 +83,40 @@ public class MainActivity extends AppCompatActivity {
                 header.setAlpha(imageAlpha);
             }
         });
+        final RelativeLayout fabContainer = (RelativeLayout) findViewById(R.id.fab_container);
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab1 = (FloatingActionButton) findViewById(R.id.fab1);
+        final FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
+        fab1.setTag(false);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if ((Boolean)(fab1.getTag())) {
+
+                    TransitionManager.beginDelayedTransition(fabContainer, new Rotate());
+                    fab.setRotation(0);
+                    fab1.setTag(false);
+
+//                    fab1.setVisibility(View.GONE);
+                    TransitionManager.beginDelayedTransition(fabContainer,
+                            new ChangeBounds().setPathMotion(new ArcMotion()).setDuration(5000));
+
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) fab1.getLayoutParams();
+                    params.removeRule(RelativeLayout.LEFT_OF);
+                    fab1.setLayoutParams(params);
+                } else {
+                    fab1.setTag(true);
+                    TransitionManager.beginDelayedTransition(fabContainer, new Rotate());
+                    fab.setRotation(135);
+
+//                    fab1.setVisibility(View.VISIBLE);
+                    TransitionManager.beginDelayedTransition(fabContainer,
+                            new ChangeBounds().setPathMotion(new ArcMotion()).setDuration(500));
+
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) fab1.getLayoutParams();
+                    params.addRule(RelativeLayout.LEFT_OF, fab.getId());
+                    fab1.setLayoutParams(params);
+                }
             }
         });
 
