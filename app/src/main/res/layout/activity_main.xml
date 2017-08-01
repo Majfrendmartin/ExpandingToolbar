@@ -51,12 +51,34 @@
     <!--<include layout="@layout/content_main"/>-->
 
     <RelativeLayout
-        android:elevation="15dp"
+        android:id="@+id/fab_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:elevation="15dp"
         app:layout_anchor="@id/app_bar_layout"
-        app:layout_anchorGravity="bottom|right|end"
-        android:id="@+id/fab_container">
+        app:layout_anchorGravity="bottom|right|end">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/fab"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="24dp"
+            app:fabSize="mini"
+            app:srcCompat="@android:drawable/ic_btn_speak_now"
+            tools:visibility="visible"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/fab"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="24dp"
+            app:fabSize="mini"
+            app:srcCompat="@android:drawable/ic_dialog_alert"
+            tools:visibility="visible"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
@@ -64,29 +86,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@android:drawable/ic_dialog_email"
-            app:fabSize="normal"/>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_dialog_email"
-            app:fabSize="mini"
-            android:layout_marginLeft="10dp"
-            android:layout_alignBottom="@id/fab"
-            tools:visibility="visible"/>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_dialog_email"
-            app:fabSize="mini"
-            android:layout_toLeftOf="@id/fab1"
-            android:layout_alignBottom="@id/fab"
-            android:visibility="gone"
-            tools:visibility="visible"/>
+            app:fabSize="normal"
+            app:srcCompat="@android:drawable/ic_dialog_email"/>
 
     </RelativeLayout>
 

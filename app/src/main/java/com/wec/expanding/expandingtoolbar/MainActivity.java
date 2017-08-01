@@ -1,6 +1,6 @@
 package com.wec.expanding.expandingtoolbar;
 
-import android.content.Intent;
+import android.animation.ObjectAnimator;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
@@ -8,15 +8,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
+import android.support.transition.TransitionManager;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,8 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -33,26 +32,27 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.transitionseverywhere.ArcMotion;
-import com.transitionseverywhere.ChangeBounds;
-import com.transitionseverywhere.Rotate;
-import com.transitionseverywhere.Slide;
-import com.transitionseverywhere.TransitionManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int DATASET_SIZE = 5;
-    private static final String[] STRING_ARRAY_LIST = new String[]{
-            "http://people.kzoo.edu/k11kg03/CS107Web/originalLeopard.jpg",
-            "http://wfiles.brothersoft.com/e6/android_189017-640x480.jpg",
-            "http://www.iceis.pl/640x480/640x480_-_niagarafalls640x480.jpg",
-            "http://www.mynetpublish.com/wp-content/uploads/2015/11/green-1397740-640x480.jpg",
-            "http://www.dailymobile.net/wp-content/uploads/2009/03/android-wallpapers-640-480-dailymobile030.jpg",
-            "http://www.dailymobile.net/wp-content/uploads/wallpapers/android-640x480-wallpapers/android-640x480-wallpaper-70.jpg",
-            "http://www.dailymobile.net/wp-content/uploads/2012/06/android-640x480-wallpaper-455.jpg",
-            "http://www.dailymobile.net/wp-content/uploads/wallpapers/android-640x480-wallpapers/android-640x480-wallpaper-75.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/1/1d/160604_kew-gardens-waterlily-house_3-640x480.jpg"
-    };
+    private static final List<Pair<String, Boolean>> STRING_ARRAY_LIST = new ArrayList<>();
+
+    {
+        STRING_ARRAY_LIST.add(Pair.create("http://people.kzoo.edu/k11kg03/CS107Web/originalLeopard.jpg", false));
+        STRING_ARRAY_LIST.add(Pair.create("http://wfiles.brothersoft.com/e6/android_189017-640x480.jpg", false));
+        STRING_ARRAY_LIST.add(Pair.create("http://www.iceis.pl/640x480/640x480_-_niagarafalls640x480.jpg", false));
+        STRING_ARRAY_LIST.add(Pair.create("http://www.mynetpublish.com/wp-content/uploads/2015/11/green-1397740-640x480.jpg", false));
+        STRING_ARRAY_LIST.add(Pair.create("http://www.dailymobile.net/wp-content/uploads/2009/03/android-wallpapers-640-480-dailymobile030.jpg", false));
+        STRING_ARRAY_LIST.add(Pair.create("http://www.dailymobile.net/wp-content/uploads/wallpapers/android-640x480-wallpapers/android-640x480-wallpaper-70.jpg", false));
+        STRING_ARRAY_LIST.add(Pair.create("http://www.dailymobile.net/wp-content/uploads/2012/06/android-640x480-wallpaper-455.jpg", false));
+        STRING_ARRAY_LIST.add(Pair.create("http://www.dailymobile.net/wp-content/uploads/wallpapers/android-640x480-wallpapers/android-640x480-wallpaper-75.jpg", false));
+        STRING_ARRAY_LIST.add(Pair.create("https://upload.wikimedia.org/wikipedia/commons/1/1d/160604_kew-gardens-waterlily-house_3-640x480.jpg", false));
+    }
+
     private RecyclerView recyclerView;
     private MyAdapter adapter;
 
@@ -91,31 +91,52 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if ((Boolean)(fab1.getTag())) {
+                if ((Boolean) (fab1.getTag())) {
+//                    TransitionManager.beginDelayedTransition(fabContainer, new Rotate());
+//                    fab.setRotation(0);
 
-                    TransitionManager.beginDelayedTransition(fabContainer, new Rotate());
-                    fab.setRotation(0);
+
+                    ObjectAnimator imageViewObjectAnimator = ObjectAnimator.ofFloat(fab,
+                            "rotation", 135f, 0f);
+                    imageViewObjectAnimator.setDuration(500); // miliseconds
+                    imageViewObjectAnimator.start();
+
+
                     fab1.setTag(false);
+//                    TransitionManager.beginDelayedTransition(fabContainer, new Slide(Gravity.RIGHT));
 
+                    ObjectAnimator animator = ObjectAnimator.ofFloat(fab1, "X", fab1.getX() + 180);
+                    animator.setDuration(500);
+                    animator.setInterpolator(new FastOutSlowInInterpolator());
+                    animator.start();
+
+                    ObjectAnimator animator2 = ObjectAnimator.ofFloat(fab2, "X", fab2.getX() + 350);
+                    animator2.setDuration(1000);
+                    animator2.setInterpolator(new FastOutSlowInInterpolator());
+                    animator2.start();
 //                    fab1.setVisibility(View.GONE);
-                    TransitionManager.beginDelayedTransition(fabContainer,
-                            new ChangeBounds().setPathMotion(new ArcMotion()).setDuration(5000));
-
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) fab1.getLayoutParams();
-                    params.removeRule(RelativeLayout.LEFT_OF);
-                    fab1.setLayoutParams(params);
                 } else {
+//                    TransitionManager.beginDelayedTransition(fabContainer, new Rotate());
+//
+//                    fab.setRotation(135);
+
+                    ObjectAnimator imageViewObjectAnimator = ObjectAnimator.ofFloat(fab,
+                            "rotation", 0f, 135f);
+                    imageViewObjectAnimator.setDuration(500); // miliseconds
+                    imageViewObjectAnimator.start();
+
                     fab1.setTag(true);
-                    TransitionManager.beginDelayedTransition(fabContainer, new Rotate());
-                    fab.setRotation(135);
+                    ObjectAnimator animator = ObjectAnimator.ofFloat(fab1, "X", fab1.getX() - 180);
+                    animator.setDuration(500);
+                    animator.setInterpolator(new FastOutSlowInInterpolator());
+                    animator.start();
 
+                    ObjectAnimator animator2 = ObjectAnimator.ofFloat(fab2, "X", fab2.getX() - 350);
+                    animator2.setDuration(1000);
+                    animator2.setInterpolator(new FastOutSlowInInterpolator());
+                    animator2.start();
+//                    TransitionManager.beginDelayedTransition(fabContainer, new Slide(Gravity.RIGHT));
 //                    fab1.setVisibility(View.VISIBLE);
-                    TransitionManager.beginDelayedTransition(fabContainer,
-                            new ChangeBounds().setPathMotion(new ArcMotion()).setDuration(500));
-
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) fab1.getLayoutParams();
-                    params.addRule(RelativeLayout.LEFT_OF, fab.getId());
-                    fab1.setLayoutParams(params);
                 }
             }
         });
@@ -171,11 +192,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-        private String[] mDataset;
+        private List<Pair<String, Boolean>> mDataset;
         private int mExpandedPosition = -1;
 
         // Provide a suitable constructor (depends on the kind of dataset)
-        public MyAdapter(String[] myDataset) {
+        public MyAdapter(List<Pair<String, Boolean>> myDataset) {
             mDataset = myDataset;
         }
 
@@ -196,16 +217,20 @@ public class MainActivity extends AppCompatActivity {
         public void onBindViewHolder(ViewHolder holder, final int position) {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
-            final boolean isExpanded = position == mExpandedPosition;
+
             holder.title.setText("Item " + position);
-            holder.setImage(mDataset[position]);
+            holder.setPosition(position);
+            final Pair<String, Boolean> stringBooleanPair = mDataset.get(position);
+            holder.setImage(stringBooleanPair.first);
+            holder.details.setVisibility(stringBooleanPair.second ? View.VISIBLE : View.GONE);
+
 
 //            holder.details.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
 //            holder.itemView.setActivated(isExpanded);
 //            holder.itemView.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View view) {
-//                    mExpandedPosition = isExpanded ? -1 : position;
+//
 //                    TransitionManager.beginDelayedTransition(recyclerView);
 //                    notifyDataSetChanged();
 //                }
@@ -215,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
         // Return the size of your dataset (invoked by the layout manager)
         @Override
         public int getItemCount() {
-            return mDataset.length;
+            return mDataset.size();
         }
 
         // Provide a reference to the views for each data item
@@ -225,25 +250,42 @@ public class MainActivity extends AppCompatActivity {
             private final View details;
             private final ImageView ivItemImage;
             private final View content;
+            private final LinearLayout layout;
             public TextView title;
             private String imageUrl;
+            private int position;
 
-            public ViewHolder(View v) {
+            public ViewHolder(final View v) {
                 super(v);
                 title = (TextView) itemView.findViewById(R.id.tv_content);
                 details = itemView.findViewById(R.id.tv_details);
+                layout = (LinearLayout) itemView.findViewById(R.id.ll_item_content);
                 content = itemView.findViewById(R.id.cv_content);
                 ivItemImage = (ImageView) itemView.findViewById(R.id.iv_item_image);
+
 
                 content.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        final ActivityOptionsCompat activityOptionsCompat =
-                                ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                        MainActivity.this, ivItemImage, getString(R.string.transition_cover));
-                        final Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
-                        intent.putExtra("url", imageUrl);
-                        ActivityCompat.startActivity(MainActivity.this, intent, activityOptionsCompat.toBundle());
+//                        final ActivityOptionsCompat activityOptionsCompat =
+//                                ActivityOptionsCompat.makeSceneTransitionAnimation(
+//                                        MainActivity.this, ivItemImage, getString(R.string.transition_cover));
+//                        final Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+//                        intent.putExtra("url", imageUrl);
+//                        ActivityCompat.startActivity(MainActivity.this, intent, activityOptionsCompat.toBundle());
+
+//                        final boolean isExpanded = position == mExpandedPosition;
+//                        mExpandedPosition = isExpanded ? -1 : position;
+                        TransitionManager.beginDelayedTransition(recyclerView);
+
+                        final Pair<String, Boolean> stringBooleanPair = STRING_ARRAY_LIST.get(position);
+                        if (details.getVisibility() != View.VISIBLE) {
+                            details.setVisibility(View.VISIBLE);
+                            stringBooleanPair.second = true;
+                        } else {
+                            details.setVisibility(View.GONE);
+                            stringBooleanPair.second = false;
+                        }
                     }
                 });
 
@@ -275,6 +317,25 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
             }
+
+            public void setPosition(int position) {
+                this.position = position;
+            }
+        }
+    }
+
+    private static class Pair <T, Y> {
+
+        private Pair(T first, Y second) {
+            this.first = first;
+            this.second = second;
+        }
+
+        public T first;
+        public Y second;
+
+        public static <A,B> Pair <A, B>  create(A first, B second){
+            return new Pair<>(first, second);
         }
     }
 
