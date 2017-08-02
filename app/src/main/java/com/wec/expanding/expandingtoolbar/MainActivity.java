@@ -1,5 +1,6 @@
 package com.wec.expanding.expandingtoolbar;
 
+import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -114,11 +115,35 @@ public class MainActivity extends AppCompatActivity {
                     animator2.setDuration(1000);
                     animator2.setInterpolator(new FastOutSlowInInterpolator());
                     animator2.start();
-//                    fab1.setVisibility(View.GONE);
+                    animator.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            fab1.setVisibility(View.INVISIBLE);
+                            fab2.setVisibility(View.INVISIBLE);
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+
+                        }
+                    });
                 } else {
 //                    TransitionManager.beginDelayedTransition(fabContainer, new Rotate());
 //
 //                    fab.setRotation(135);
+
+                    fab1.setVisibility(View.VISIBLE);
+                    fab2.setVisibility(View.VISIBLE);
 
                     ObjectAnimator imageViewObjectAnimator = ObjectAnimator.ofFloat(fab,
                             "rotation", 0f, 135f);
@@ -136,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                     animator2.setInterpolator(new FastOutSlowInInterpolator());
                     animator2.start();
 //                    TransitionManager.beginDelayedTransition(fabContainer, new Slide(Gravity.RIGHT));
-//                    fab1.setVisibility(View.VISIBLE);
+
                 }
             }
         });

@@ -66,7 +66,9 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="24dp"
             app:fabSize="mini"
-            app:srcCompat="@android:drawable/ic_btn_speak_now"
+
+            android:visibility="invisible"
+            app:srcCompat="@drawable/ic_github"
             tools:visibility="visible"/>
 
         <android.support.design.widget.FloatingActionButton
@@ -76,8 +78,9 @@
             android:layout_alignBottom="@id/fab"
             android:layout_alignParentRight="true"
             android:layout_marginRight="24dp"
+            android:visibility="invisible"
             app:fabSize="mini"
-            app:srcCompat="@android:drawable/ic_dialog_alert"
+            app:srcCompat="@drawable/ic_linked_in"
             tools:visibility="visible"/>
 
         <android.support.design.widget.FloatingActionButton
